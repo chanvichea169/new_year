@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy New Year 2026</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Poppins:wght@300;500&display=swap");
+
+      :root {
+        --gold: #ffd700;
+        --gold-gradient: linear-gradient(
+          to right,
+          #bf953f,
+          #fcf6ba,
+          #b38728,
+          #fbf5b7,
+          #aa771c
+        );
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #020202;
+        overflow: hidden;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Poppins", sans-serif;
+        color: white;
+      }
+
+      #canvas-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        background: radial-gradient(circle at center, #1a0b2e 0%, #000000 100%);
+      }
+
+      .container {
+        position: relative;
+        z-index: 10;
+        text-align: center;
+        padding: 2rem;
+        width: 90%;
+        max-width: 600px;
+
+        /* Glassmorphism Effect */
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+        animation: fadeIn 2s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .year {
+        font-family: "Cinzel", serif;
+        font-size: 6rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 10px;
+
+        /* Gold Text Effect */
+        background: var(--gold-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0px 5px 15px rgba(255, 215, 0, 0.3);
+
+        animation: float 6s ease-in-out infinite;
+      }
+
+      .title {
+        font-family: "Great Vibes", cursive;
+        font-size: 3.5rem;
+        color: #fff;
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+
+      .message {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #e0e0e0;
+        margin-bottom: 30px;
+        font-weight: 300;
+      }
+
+      .btn {
+        background: transparent;
+        border: 2px solid #bf953f;
+        color: #bf953f;
+        padding: 12px 30px;
+        font-size: 1rem;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: "Cinzel", serif;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn:hover {
+        background: #bf953f;
+        color: #000;
+        box-shadow: 0 0 20px #bf953f;
+      }
+
+      /* Decorative lines */
+      .line {
+        width: 50px;
+        height: 2px;
+        background: var(--gold-gradient);
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 10px;
+      }
+
+      /* Mobile adjustments */
+      @media (max-width: 600px) {
+        .year {
+          font-size: 4rem;
+        }
+        .title {
+          font-size: 2.5rem;
+        }
+        .message {
+          font-size: 0.95rem;
+        }
+        .container {
+          padding: 1.5rem;
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="canvas-container">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="container">
+      <div class="title">Happy New Year</div>
+      <div class="year">2026</div>
+
+      <div class="message">
+        <span class="line"></span> Wishes for You <span class="line"></span>
+        <br /><br />
+        May the coming year be full of grand adventures and opportunities.
+        Wishing you 12 months of success, 52 weeks of laughter, 365 days of fun,
+        and 8760 hours of joy.
+        <br /><br />
+        Let your dreams take flight!
+        <br /><br />
+        <div
+          style="
+            font-family: 'Great Vibes', cursive;
+            font-size: 2rem;
+            color: #bf953f;
+            margin-top: 10px;
+          "
+        >
+          ~ Chann Vichea ~
+        </div>
+      </div>
+
+      <button class="btn" onclick="launchFinale()">Make a Wish</button>
+    </div>
+
+    <script>
+      // --- Fireworks Animation Script ---
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      let width, height;
+      let particles = [];
+      let fireworks = [];
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      // Utility
+      const random = (min, max) => Math.random() * (max - min) + min;
+
+      // Color palettes
+      const colors = [
+        ["#ff0043", "#00d0ff", "#ffffff"], // Cyber
+        ["#ffd700", "#ff8c00", "#ffffff"], // Gold
+        ["#ff0099", "#493240", "#9900ff"], // Purple
+        ["#00ff00", "#ccff00", "#ffffff"], // Lime
+      ];
+
+      class Firework {
+        constructor(targetX, targetY, isFinale = false) {
+          this.x = width / 2;
+          if (!isFinale) {
+            this.x = random(width * 0.1, width * 0.9);
+          }
+
+          this.y = height;
+          this.targetX = targetX || random(width * 0.1, width * 0.9);
+          this.targetY = targetY || random(height * 0.1, height * 0.4); // Explode in upper half
+
+          this.speed = 2;
+          this.angle = Math.atan2(this.targetY - this.y, this.targetX - this.x);
+          this.velocity = {
+            x: Math.cos(this.angle) * 15, // Fast launch
+            y: Math.sin(this.angle) * 15,
+          };
+
+          // Trail
+          this.history = [];
+          this.alpha = 1;
+        }
+
+        update(index) {
+          this.history.push({ x: this.x, y: this.y });
+          if (this.history.length > 5) this.history.shift();
+
+          this.x += this.velocity.x;
+          this.y += this.velocity.y;
+          this.velocity.y += 0.05; // Gravity effect on rocket
+
+          // Distance check
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 30 || this.velocity.y >= 0) {
+            createParticles(this.x, this.y);
+            fireworks.splice(index, 1);
+          }
+        }
+
+        draw() {
+          ctx.beginPath();
+          ctx.moveTo(
+            this.history[0]?.x || this.x,
+            this.history[0]?.y || this.y
+          );
+          for (let i = 1; i < this.history.length; i++) {
+            ctx.lineTo(this.history[i].x, this.history[i].y);
+          }
+          ctx.lineTo(this.x, this.y);
+          ctx.strokeStyle = `rgba(255, 255, 255, 0.5)`;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
+
+      class Particle {
+        constructor(x, y, color) {
+          this.x = x;
+          this.y = y;
+          this.color = color;
+          const angle = random(0, Math.PI * 2);
+          const velocity = random(2, 8);
+          this.velocity = {
+            x: Math.cos(angle) * velocity,
+            y: Math.sin(angle) * velocity,
+          };
+          this.alpha = 1;
+          this.decay = random(0.015, 0.03);
+          this.gravity = 0.15;
+        }
+
+        update(index) {
+          this.velocity.y += this.gravity;
+          this.x += this.velocity.x;
+          this.y += this.velocity.y;
+          this.alpha -= this.decay;
+
+          // Air resistance
+          this.velocity.x *= 0.96;
+          this.velocity.y *= 0.96;
+
+          if (this.alpha <= 0) {
+            particles.splice(index, 1);
+          }
+        }
+
+        draw() {
+          ctx.save();
+          ctx.globalAlpha = this.alpha;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      function createParticles(x, y) {
+        const palette = colors[Math.floor(random(0, colors.length))];
+        const particleCount = 100;
+        for (let i = 0; i < particleCount; i++) {
+          const color = palette[Math.floor(random(0, palette.length))];
+          particles.push(new Particle(x, y, color));
+        }
+      }
+
+      function loop() {
+        // Trail effect for background
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)"; // Fades out previous frames
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.globalCompositeOperation = "lighter"; // Additive blending for glow
+
+        fireworks.forEach((fw, i) => {
+          fw.update(i);
+          fw.draw();
+        });
+
+        particles.forEach((p, i) => {
+          p.update(i);
+          p.draw();
+        });
+
+        // Random automated launches
+        if (Math.random() < 0.03) {
+          fireworks.push(new Firework());
+        }
+
+        requestAnimationFrame(loop);
+      }
+
+      // --- Interaction ---
+
+      // Launch on click
+      canvas.addEventListener("click", (e) => {
+        fireworks.push(new Firework(e.clientX, e.clientY));
+      });
+
+      // Launch finale button
+      function launchFinale() {
+        // Rapid fire
+        let count = 0;
+        const interval = setInterval(() => {
+          fireworks.push(
+            new Firework(
+              random(width * 0.2, width * 0.8),
+              random(height * 0.1, height * 0.5),
+              true
+            )
+          );
+          count++;
+          if (count > 10) clearInterval(interval);
+        }, 200);
+      }
+
+      // Start
+      loop();
+
+      // Initial welcome bang
+      setTimeout(() => {
+        fireworks.push(new Firework(width / 2, height * 0.3));
+      }, 1000);
+    </script>
+  </body>
+</html>
