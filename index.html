@@ -53,7 +53,7 @@
         text-align: center;
         padding: 2rem;
         width: 90%;
-        max-width: 600px;
+        max-width: 700px;
 
         /* Glassmorphism Effect */
         background: rgba(255, 255, 255, 0.05);
@@ -75,7 +75,9 @@
         }
       }
 
+      /* Year (Initially hidden if counting down) */
       .year {
+        display: none;
         font-family: "Cinzel", serif;
         font-size: 6rem;
         font-weight: 700;
@@ -89,7 +91,18 @@
         color: transparent;
         text-shadow: 0px 5px 15px rgba(255, 215, 0, 0.3);
 
-        animation: float 6s ease-in-out infinite;
+        animation: float 6s ease-in-out infinite, scaleUp 1s ease-out;
+      }
+
+      @keyframes scaleUp {
+        from {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
       }
 
       .title {
@@ -98,6 +111,42 @@
         color: #fff;
         margin-bottom: 20px;
         text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+
+      /* Countdown Styles */
+      #countdown {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding: 1rem 0;
+      }
+
+      .time-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 80px;
+      }
+
+      .time-elem {
+        font-family: "Cinzel", serif;
+        font-size: 3rem;
+        font-weight: 700;
+        background: var(--gold-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        line-height: 1.2;
+        text-shadow: 0px 5px 15px rgba(255, 215, 0, 0.2);
+      }
+
+      .label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: 5px;
       }
 
       .message {
@@ -154,6 +203,19 @@
         .container {
           padding: 1.5rem;
         }
+        #countdown {
+          gap: 0.5rem;
+        }
+        .time-box {
+          min-width: 60px;
+        }
+        .time-elem {
+          font-size: 2rem;
+        }
+        .label {
+          font-size: 0.6rem;
+          letter-spacing: 1px;
+        }
       }
 
       @keyframes float {
@@ -173,8 +235,30 @@
     </div>
 
     <div class="container">
-      <div class="title">Happy New Year</div>
-      <div class="year">2026</div>
+      <div class="title" id="main-title">Counting Down to...</div>
+
+      <!-- Countdown Section -->
+      <div id="countdown">
+        <div class="time-box">
+          <div class="time-elem" id="days">00</div>
+          <div class="label">Days</div>
+        </div>
+        <div class="time-box">
+          <div class="time-elem" id="hours">00</div>
+          <div class="label">Hours</div>
+        </div>
+        <div class="time-box">
+          <div class="time-elem" id="minutes">00</div>
+          <div class="label">Minutes</div>
+        </div>
+        <div class="time-box">
+          <div class="time-elem" id="seconds">00</div>
+          <div class="label">Seconds</div>
+        </div>
+      </div>
+
+      <!-- The Year 2026 (Hidden until 0) -->
+      <div class="year" id="year-display">2026</div>
 
       <div class="message">
         <span class="line"></span> Wishes for You <span class="line"></span>
@@ -201,6 +285,56 @@
     </div>
 
     <script>
+      // --- Countdown Script ---
+      const targetDate = new Date("Jan 1, 2026 00:00:00").getTime();
+      let countdownActive = true;
+
+      function updateCountdown() {
+        if (!countdownActive) return;
+
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        // Calculations
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Display
+        document.getElementById("days").innerText = String(days).padStart(
+          2,
+          "0"
+        );
+        document.getElementById("hours").innerText = String(hours).padStart(
+          2,
+          "0"
+        );
+        document.getElementById("minutes").innerText = String(minutes).padStart(
+          2,
+          "0"
+        );
+        document.getElementById("seconds").innerText = String(seconds).padStart(
+          2,
+          "0"
+        );
+
+        // Check if finished
+        if (distance < 0) {
+          countdownActive = false;
+          clearInterval(interval);
+          document.getElementById("countdown").style.display = "none";
+          document.getElementById("year-display").style.display = "block";
+          document.getElementById("main-title").innerText = "Happy New Year";
+          launchFinale(); // Auto-trigger fireworks
+        }
+      }
+
+      const interval = setInterval(updateCountdown, 1000);
+      updateCountdown(); // Run immediately on load
+
       // --- Fireworks Animation Script ---
       const canvas = document.getElementById("canvas");
       const ctx = canvas.getContext("2d");
